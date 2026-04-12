@@ -1,0 +1,161 @@
+<!-- C:\Users\acer\Desktop\pj\Final Year Project\frontend\index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fake Account Detector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <main class="app-shell">
+    <section class="hero glass-card">
+      <div class="hero-badge">Fake Account Detection System</div>
+      <h1>Modern AI-powered account screening</h1>
+      <p class="hero-text">
+        Enter account details manually or upload a file to analyze accounts instantly.
+      </p>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-value">2</span>
+          <span class="stat-label">Input modes</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">ML</span>
+          <span class="stat-label">Model driven</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">Live</span>
+          <span class="stat-label">Confidence output</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard glass-card">
+      <div class="mode-switcher">
+        <button id="manualBtn" class="mode-btn active">Manual Input</button>
+        <button id="fileBtn" class="mode-btn">Upload File</button>
+      </div>
+
+      <div id="manualSection" class="panel">
+        <div class="panel-header">
+          <h2>Manual Prediction</h2>
+          <p>Fill in the account features and get a result immediately.</p>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="followers">Followers</label>
+            <input type="number" id="followers" placeholder="e.g. 300" min="0" />
+          </div>
+
+          <div class="field">
+            <label for="following">Following</label>
+            <input type="number" id="following" placeholder="e.g. 180" min="0" />
+          </div>
+
+          <div class="field">
+            <label for="posts">Posts</label>
+            <input type="number" id="posts" placeholder="e.g. 120" min="0" />
+          </div>
+
+          <div class="field">
+            <label for="len_fullname">Full Name Length</label>
+            <input type="number" id="len_fullname" placeholder="e.g. 12" min="0" />
+          </div>
+
+          <div class="field">
+            <label for="len_desc">Bio Length</label>
+            <input type="number" id="len_desc" placeholder="e.g. 50" min="0" />
+          </div>
+
+          <div class="field field-wide">
+            <label for="ratio_numlen_username">Username Numeric Ratio</label>
+            <input type="number" id="ratio_numlen_username" placeholder="e.g. 0.2" min="0" step="0.01" />
+          </div>
+
+          <div class="field field-wide">
+            <label for="ratio_numlen_fullname">Full Name Numeric Ratio</label>
+            <input type="number" id="ratio_numlen_fullname" placeholder="e.g. 0.1" min="0" step="0.01" />
+          </div>
+        </div>
+
+        <button class="primary-btn" onclick="predictManual()">
+          <span>Predict Account Type</span>
+        </button>
+      </div>
+
+      <div id="fileSection" class="panel hidden">
+        <div class="panel-header">
+          <h2>Bulk Prediction</h2>
+          <p>Upload a CSV or JSON file to predict multiple accounts at once.</p>
+        </div>
+
+        <div class="upload-box">
+          <input type="file" id="fileInput" accept=".csv,.json" />
+          <p>Supported formats: CSV, JSON</p>
+        </div>
+
+        <button class="primary-btn" onclick="predictFile()">
+          <span>Upload & Predict</span>
+        </button>
+      </div>
+
+      <div id="resultCard" class="result-card hidden">
+        <div class="result-top">
+          <div>
+            <p class="result-label">Prediction Result</p>
+            <h3 id="resultText">—</h3>
+          </div>
+          <div id="resultChip" class="result-chip neutral">—</div>
+        </div>
+
+        <div class="confidence-wrap">
+          <div class="confidence-meta">
+            <span>Confidence</span>
+            <strong id="confidenceText">—</strong>
+          </div>
+
+          <div class="progress-track">
+            <div id="confidenceBar" class="progress-bar"></div>
+          </div>
+
+          <p id="probabilityText" class="probability-text"></p>
+        </div>
+      </div>
+
+      <div id="bulkSummaryCard" class="summary-card hidden">
+        <div class="summary-item">
+          <span>Total</span>
+          <strong id="summaryTotal">0</strong>
+        </div>
+        <div class="summary-item">
+          <span>Real</span>
+          <strong id="summaryReal">0</strong>
+        </div>
+        <div class="summary-item">
+          <span>Fake</span>
+          <strong id="summaryFake">0</strong>
+        </div>
+      </div>
+
+      <div id="loader" class="loader hidden">
+        <div class="spinner"></div>
+        <p>Analyzing account data...</p>
+      </div>
+
+      <div id="errorBox" class="error-box hidden"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
