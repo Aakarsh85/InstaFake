@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Methodology — InstaGuard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="landing.css"/>
+  <style>
+    /* Methodology-specific overrides */
+    .method-hero {
+      padding-top: calc(var(--nav-h) + 72px);
+      padding-bottom: 72px;
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto;
+      padding-left: 32px;
+      padding-right: 32px;
+    }
+    .method-hero .hero-eyebrow { margin-bottom: 22px; }
+    .method-hero .hero-title { font-size: clamp(2.2rem,4vw,3.4rem); }
+    .method-hero .hero-desc { max-width: 58ch; margin: 0 auto 0; }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.82rem; color: var(--muted2);
+      margin-bottom: 20px; justify-content: center;
+    }
+    .breadcrumb a { color: var(--cobalt); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb span { color: var(--muted2); }
+
+    /* Content sections */
+    .method-section { padding: 80px 32px; }
+    .method-inner { max-width: 1100px; margin: 0 auto; }
+
+    /* Dataset card */
+    .dataset-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      margin-top: 40px;
+    }
+    .dataset-card {
+      background: var(--glass-2);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      transition: transform var(--t) var(--ease-back), box-shadow var(--t);
+      animation: fadeUp 0.6s var(--ease) both;
+    }
+    .dataset-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .dataset-card h4 {
+      font-family: 'Syne', sans-serif; font-size: 0.75rem;
+      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--cobalt); margin-bottom: 18px;
+    }
+    .dataset-stat {
+      display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px;
+    }
+    .ds-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem; font-weight: 800; color: var(--text); line-height: 1;
+    }
+    .ds-lbl { font-size: 0.9rem; color: var(--muted); }
+    .ds-breakdown { margin-top: 16px; }
+    .dsb-row {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.84rem; color: var(--muted); margin-bottom: 10px;
+    }
+    .dsb-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .dsb-dot.real { background: var(--real); }
+    .dsb-dot.fake { background: var(--fake); }
+    .dsb-bar { flex: 1; height: 6px; border-radius: 99px; background: rgba(59,99,247,0.08); overflow: hidden; }
+    .dsb-fill { height: 100%; border-radius: inherit; transition: width 1s var(--ease); }
+    .dsb-fill.real { background: var(--real); }
+    .dsb-fill.fake { background: var(--fake); }
+    .dsb-pct { width: 36px; text-align: right; font-weight: 600; }
+
+    /* Feature table */
+    .feature-table-wrap {
+      background: var(--glass-2);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      margin-top: 40px;
+    }
+    .feature-table {
+      width: 100%; border-collapse: collapse; font-size: 0.9rem;
+    }
+    .feature-table th {
+      text-align: left; padding: 14px 20px;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em;
+      text-transform: uppercase; color: var(--muted2);
+      background: rgba(255,255,255,0.6);
+      border-bottom: 1px solid rgba(59,99,247,0.1);
+    }
+    .feature-table td {
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(59,99,247,0.07);
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .feature-table tr:last-child td { border-bottom: none; }
+    .feature-table tbody tr { transition: background 0.15s; }
+    .feature-table tbody tr:hover { background: rgba(59,99,247,0.03); }
+    .feature-table tbody tr:hover td { color: var(--text2); }
+    .ft-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem; font-weight: 500;
+      color: var(--cobalt);
+    }
+    .importance-tag {
+      padding: 3px 10px; border-radius: 6px;
+      font-size: 0.74rem; font-weight: 700;
+    }
+    .imp-high   { background: rgba(244,63,94,0.1);  color: var(--fake); }
+    .imp-medium { background: rgba(245,158,11,0.1); color: #f59e0b; }
+    .imp-low    { background: rgba(16,185,129,0.1); color: var(--real); }
+
+    /* Pipeline steps */
+    .pipeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 40px;
+      position: relative;
+    }
+    .pipeline::before {
+      content: '';
+      position: absolute;
+      left: 28px; top: 56px; bottom: 56px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--cobalt), var(--indigo), rgba(59,99,247,0.1));
+    }
+    .pipeline-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      padding: 28px 0;
+      animation: fadeUp 0.6s var(--ease) both;
+    }
+    .ps-num {
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      background: var(--glass-2);
+      backdrop-filter: blur(12px);
+      border: 2px solid rgba(59,99,247,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 800; color: var(--cobalt);
+      flex-shrink: 0;
+      box-shadow: var(--shadow);
+      z-index: 1;
+      position: relative;
+      transition: transform var(--t) var(--ease-back), box-shadow var(--t);
+    }
+    .pipeline-step:hover .ps-num {
+      transform: scale(1.08);
+      box-shadow: var(--shadow-lg), 0 0 0 4px rgba(59,99,247,0.1);
+    }
+    .ps-content {
+      flex: 1;
+      background: var(--glass-2);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 24px 28px;
+      box-shadow: var(--shadow);
+      transition: transform var(--t) var(--ease-back), box-shadow var(--t);
+    }
+    .pipeline-step:hover .ps-content { transform: translateX(4px); box-shadow: var(--shadow-lg); }
+    .ps-content h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem; font-weight: 700; color: var(--text);
+      margin-bottom: 10px; letter-spacing: -0.02em;
+    }
+    .ps-content p { font-size: 0.9rem; color: var(--muted); line-height: 1.75; }
+    .ps-tag {
+      display: inline-block; margin-top: 12px;
+      padding: 4px 10px; border-radius: 6px;
+      background: rgba(59,99,247,0.08);
+      color: var(--cobalt); font-size: 0.74rem; font-weight: 600;
+    }
+
+    /* Metrics grid */
+    .metrics-big-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 40px;
+    }
+    .mbg-card {
+      background: var(--glass-2);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 28px 22px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      animation: fadeUp 0.6s var(--ease) both;
+      transition: transform var(--t) var(--ease-back), box-shadow var(--t);
+      position: relative; overflow: hidden;
+    }
+    .mbg-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--cobalt), var(--indigo));
+      opacity: 0; transition: opacity var(--t);
+    }
+    .mbg-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+    .mbg-card:hover::before { opacity: 1; }
+    .mbg-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.5rem; font-weight: 800;
+      color: var(--cobalt); line-height: 1;
+      margin-bottom: 6px;
+    }
+    .mbg-lbl {
+      font-size: 0.85rem; color: var(--muted);
+      margin-bottom: 16px; font-weight: 500;
+    }
+    .mbg-bar { height: 7px; border-radius: 99px; background: rgba(59,99,247,0.1); overflow: hidden; }
+    .mbg-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--cobalt), var(--indigo)); width: 0%; transition: width 1.2s var(--ease); }
+
+    /* Confusion matrix */
+    .confusion-wrap {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      margin-top: 40px;
+    }
+    .confusion-matrix {
+      flex-shrink: 0;
+    }
+    .cm-title {
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--muted2); margin-bottom: 12px; text-align: center;
+    }
+    .cm-table {
+      border-collapse: separate;
+      border-spacing: 6px;
+    }
+    .cm-table th {
+      font-size: 0.73rem; font-weight: 600;
+      color: var(--muted2); padding: 4px 8px; text-align: center;
+    }
+    .cm-cell {
+      width: 110px; height: 90px;
+      border-radius: 12px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 4px;
+    }
+    .cm-cell.tp { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); }
+    .cm-cell.tn { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); }
+    .cm-cell.fp { background: rgba(244,63,94,0.1);  border: 1px solid rgba(244,63,94,0.2); }
+    .cm-cell.fn { background: rgba(244,63,94,0.1);  border: 1px solid rgba(244,63,94,0.2); }
+    .cm-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem; font-weight: 800;
+    }
+    .cm-cell.tp .cm-val, .cm-cell.tn .cm-val { color: var(--real); }
+    .cm-cell.fp .cm-val, .cm-cell.fn .cm-val { color: var(--fake); }
+    .cm-label { font-size: 0.72rem; color: var(--muted); font-weight: 500; }
+
+    .confusion-explanation { flex: 1; }
+    .confusion-explanation h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--text); margin-bottom: 16px;
+    }
+    .ce-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      margin-bottom: 14px; padding: 14px 16px;
+      border-radius: 12px;
+      background: var(--glass-2);
+      border: 1px solid var(--glass-border);
+    }
+    .ce-badge {
+      width: 36px; height: 36px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 800;
+      flex-shrink: 0;
+    }
+    .ce-badge.tp { background: rgba(16,185,129,0.12); color: var(--real); }
+    .ce-badge.tn { background: rgba(16,185,129,0.1);  color: var(--real); }
+    .ce-badge.fp { background: rgba(244,63,94,0.1);   color: var(--fake); }
+    .ce-badge.fn { background: rgba(244,63,94,0.1);   color: var(--fake); }
+    .ce-text strong { display: block; font-size: 0.84rem; color: var(--text2); margin-bottom: 3px; }
+    .ce-text span { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+  </style>
+</head>
+<body>
+
+  <div class="mesh-bg">
+    <div class="mesh-orb orb-1"></div>
+    <div class="mesh-orb orb-2"></div>
+    <div class="mesh-orb orb-3"></div>
+    <div class="mesh-orb orb-4"></div>
+    <div class="grain"></div>
+  </div>
+
+  <nav class="nav scrolled" id="nav">
+    <div class="nav-inner">
+      <a href="landing.html" class="nav-brand">
+        <div class="brand-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        InstaGuard
+      </a>
+      <div class="nav-links">
+        <a href="landing.html" class="nav-link">Home</a>
+        <a href="methodology.html" class="nav-link active">Methodology</a>
+        <a href="index.html" class="nav-link">Dashboard</a>
+      </div>
+      <a href="index.html" class="nav-cta">Launch App →</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="method-hero" style="position:relative;z-index:1">
+    <div class="breadcrumb">
+      <a href="landing.html">Home</a>
+      <span>›</span>
+      <span>Methodology</span>
+    </div>
+    <div class="hero-eyebrow" style="justify-content:center">
+      <span class="eyebrow-dot"></span>
+      Research & Technical Details
+    </div>
+    <h1 class="hero-title">How InstaGuard<br><em>actually works</em></h1>
+    <p class="hero-desc" style="margin-top:18px">
+      A deep dive into the dataset, feature engineering, model training pipeline, and performance metrics behind the fake account detection system.
+    </p>
+  </div>
+
+  <!-- Dataset -->
+  <section class="method-section">
+    <div class="method-inner">
+      <span class="section-chip">Dataset</span>
+      <h2 class="section-title">Training Data</h2>
+      <p class="section-sub">The model was trained on a labeled Instagram account dataset containing real and fake account profiles with extracted behavioral metadata.</p>
+
+      <div class="dataset-grid">
+        <div class="dataset-card">
+          <h4>Dataset Overview</h4>
+          <div class="dataset-stat">
+            <span class="ds-val">696</span>
+            <span class="ds-lbl">total accounts</span>
+          </div>
+          <div class="ds-breakdown">
+            <div class="dsb-row">
+              <span class="dsb-dot real"></span>
+              Real Accounts
+              <div class="dsb-bar"><div class="dsb-fill real" style="width:50%"></div></div>
+              <span class="dsb-pct">50%</span>
+            </div>
+            <div class="dsb-row">
+              <span class="dsb-dot fake"></span>
+              Fake Accounts
+              <div class="dsb-bar"><div class="dsb-fill fake" style="width:50%"></div></div>
+              <span class="dsb-pct">50%</span>
+            </div>
+          </div>
+        </div>
+        <div class="dataset-card">
+          <h4>Train / Test Split</h4>
+          <div class="dataset-stat">
+            <span class="ds-val">80%</span>
+            <span class="ds-lbl">training data</span>
+          </div>
+          <div class="ds-breakdown">
+            <div class="dsb-row">
+              <span class="dsb-dot real"></span>
+              Training Set
+              <div class="dsb-bar"><div class="dsb-fill real" style="width:80%"></div></div>
+              <span class="dsb-pct">557</span>
+            </div>
+            <div class="dsb-row">
+              <span class="dsb-dot fake"></span>
+              Test Set
+              <div class="dsb-bar"><div class="dsb-fill fake" style="width:20%"></div></div>
+              <span class="dsb-pct">139</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="method-section" style="padding-top:0">
+    <div class="method-inner">
+      <span class="section-chip">Feature Engineering</span>
+      <h2 class="section-title">The 7 Features</h2>
+      <p class="section-sub">Each feature was selected based on its correlation with inauthentic account behavior observed in the dataset.</p>
+
+      <div class="feature-table-wrap">
+        <table class="feature-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Description</th>
+              <th>Why It Matters</th>
+              <th>Importance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="ft-name">ratio_numlen_username</span></td>
+              <td>Proportion of digits in username</td>
+              <td>Bot accounts often have highly numeric usernames like "user39471856"</td>
+              <td><span class="importance-tag imp-high">High</span></td>
+            </tr>
+            <tr>
+              <td><span class="ft-name">len_fullname</span></td>
+              <td>Character length of display name</td>
+              <td>Fake accounts frequently have very short or missing display names</td>
+              <td><span class="importance-tag imp-high">High</span></td>
+            </tr>
+            <tr>
+              <td><span class="ft-name">ratio_numlen_fullname</span></td>
+              <td>Proportion of digits in display name</td>
+              <td>Names with many digits (e.g. "John99887") are suspicious</td>
+              <td><span class="importance-tag imp-high">High</span></td>
+            </tr>
+            <tr>
+              <td><span class="ft-name">len_desc</span></td>
+              <td>Character length of bio</td>
+              <td>Real accounts tend to have meaningful bios; fake accounts often don't</td>
+              <td><span class="importance-tag imp-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td><span class="ft-name">num_posts</span></td>
+              <td>Total number of posts</td>
+              <td>Bots have 0 posts or thousands of spam posts</td>
+              <td><span class="importance-tag imp-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td><span class="ft-name">num_followers</span></td>
+              <td>Number of followers</td>
+              <td>Very few followers relative to following is a strong bot signal</td>
+              <td><span class="importance-tag imp-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td><span class="ft-name">num_following</span></td>
+              <td>Number of accounts followed</td>
+              <td>Mass-following with low follower count is a classic bot pattern</td>
+              <td><span class="importance-tag imp-low">Low</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pipeline -->
+  <section class="method-section" style="padding-top:0">
+    <div class="method-inner">
+      <span class="section-chip">Pipeline</span>
+      <h2 class="section-title">Training Pipeline</h2>
+      <p class="section-sub">The end-to-end process from raw data to a deployed prediction model.</p>
+
+      <div class="pipeline">
+        <div class="pipeline-step"><div class="ps-num">1</div><div class="ps-content"><h4>Data Collection & Labeling</h4><p>Instagram account data was collected and manually labeled as real (0) or fake (1). Each record contains profile metadata including follower counts, post counts, username structure, and bio information.</p><span class="ps-tag">696 labeled samples</span></div></div>
+        <div class="pipeline-step"><div class="ps-num">2</div><div class="ps-content"><h4>Preprocessing & Encoding</h4><p>Boolean fields (profile picture, external URL) were encoded as 1/0. Categorical columns were one-hot encoded. All numeric fields were validated and missing values filled with 0. Feature columns were aligned to the model's training schema.</p><span class="ps-tag">Label Encoding · One-Hot Encoding</span></div></div>
+        <div class="pipeline-step"><div class="ps-num">3</div><div class="ps-content"><h4>Feature Selection</h4><p>Seven features with the strongest correlation to fake account behavior were selected through exploratory data analysis. Features with near-zero variance or high multicollinearity were excluded.</p><span class="ps-tag">Correlation Analysis · Variance Filtering</span></div></div>
+        <div class="pipeline-step"><div class="ps-num">4</div><div class="ps-content"><h4>Model Training</h4><p>A Logistic Regression classifier was trained on 80% of the data (557 samples). The model outputs a binary classification (0=real, 1=fake) along with probability scores for both classes.</p><span class="ps-tag">Logistic Regression · scikit-learn</span></div></div>
+        <div class="pipeline-step"><div class="ps-num">5</div><div class="ps-content"><h4>Evaluation & Validation</h4><p>The model was evaluated on the held-out test set (139 samples). Performance was measured across accuracy, precision, recall, and F1 score to ensure balanced classification performance.</p><span class="ps-tag">80/20 Train-Test Split</span></div></div>
+        <div class="pipeline-step"><div class="ps-num">6</div><div class="ps-content"><h4>Deployment via Flask API</h4><p>The trained model was serialized with joblib and served through a Flask REST API with two endpoints: single account prediction (/predict) and bulk file prediction (/predict-file).</p><span class="ps-tag">Flask · joblib · REST API</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Model Performance -->
+  <section class="method-section" style="padding-top:0">
+    <div class="method-inner">
+      <span class="section-chip">Results</span>
+      <h2 class="section-title">Model Performance</h2>
+      <p class="section-sub">Evaluation metrics on the held-out test set of 139 accounts.</p>
+
+      <div class="metrics-big-grid">
+        <div class="mbg-card"><div class="mbg-val">95.2%</div><div class="mbg-lbl">Accuracy</div><div class="mbg-bar"><div class="mbg-fill" data-w="95.2"></div></div></div>
+        <div class="mbg-card"><div class="mbg-val">94.8%</div><div class="mbg-lbl">Precision</div><div class="mbg-bar"><div class="mbg-fill" data-w="94.8"></div></div></div>
+        <div class="mbg-card"><div class="mbg-val">93.6%</div><div class="mbg-lbl">Recall</div><div class="mbg-bar"><div class="mbg-fill" data-w="93.6"></div></div></div>
+        <div class="mbg-card"><div class="mbg-val">94.2%</div><div class="mbg-lbl">F1 Score</div><div class="mbg-bar"><div class="mbg-fill" data-w="94.2"></div></div></div>
+      </div>
+
+      <!-- Confusion matrix -->
+      <div class="confusion-wrap" style="margin-top:52px">
+        <div class="confusion-matrix">
+          <div class="cm-title">Confusion Matrix (Test Set)</div>
+          <table class="cm-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Predicted Real</th>
+                <th>Predicted Fake</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th style="text-align:right;padding-right:10px;font-size:0.73rem;color:var(--muted2)">Actual Real</th>
+                <td><div class="cm-cell tp"><span class="cm-val">66</span><span class="cm-label">True Positive</span></div></td>
+                <td><div class="cm-cell fp"><span class="cm-val">4</span><span class="cm-label">False Positive</span></div></td>
+              </tr>
+              <tr>
+                <th style="text-align:right;padding-right:10px;font-size:0.73rem;color:var(--muted2)">Actual Fake</th>
+                <td><div class="cm-cell fn"><span class="cm-val">3</span><span class="cm-label">False Negative</span></div></td>
+                <td><div class="cm-cell tn"><span class="cm-val">66</span><span class="cm-label">True Negative</span></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="confusion-explanation">
+          <h4>Reading the Matrix</h4>
+          <div class="ce-row"><div class="ce-badge tp">TP</div><div class="ce-text"><strong>True Positive — 66</strong><span>Real accounts correctly identified as real. The model accurately recognized authentic profiles.</span></div></div>
+          <div class="ce-row"><div class="ce-badge tn">TN</div><div class="ce-text"><strong>True Negative — 66</strong><span>Fake accounts correctly identified as fake. The model successfully flagged inauthentic profiles.</span></div></div>
+          <div class="ce-row"><div class="ce-badge fp">FP</div><div class="ce-text"><strong>False Positive — 4</strong><span>Real accounts incorrectly flagged as fake. These are the model's misclassifications to minimize.</span></div></div>
+          <div class="ce-row"><div class="ce-badge fn">FN</div><div class="ce-text"><strong>False Negative — 3</strong><span>Fake accounts missed by the model. Only 3 fake accounts escaped detection.</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="cta-inner">
+      <h2>See it in action</h2>
+      <p>Try the live dashboard with demo presets or your own data.</p>
+      <div class="cta-actions">
+        <a href="index.html" class="btn-primary large">Launch Dashboard →</a>
+        <a href="landing.html" class="btn-ghost large">Back to Home</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><div class="brand-icon small"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>InstaGuard</div>
+      <div class="footer-links"><a href="landing.html">Home</a><a href="methodology.html">Methodology</a><a href="index.html">Dashboard</a></div>
+      <div class="footer-note">Final Year Project · ML-powered Instagram Account Analysis</div>
+    </div>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // Animate metric bars on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.mbg-fill, .dsb-fill, .mc-fill').forEach(bar => {
+            const w = bar.dataset.w;
+            if (w) setTimeout(() => { bar.style.width = w + '%'; }, 100);
+          });
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.metrics-big-grid, .dataset-card').forEach(el => observer.observe(el));
+
+    // Stagger pipeline steps
+    document.querySelectorAll('.pipeline-step').forEach((el, i) => {
+      el.style.animationDelay = `${i * 0.1}s`;
+    });
+  </script>
+</body>
+</html>
