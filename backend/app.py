@@ -1,5 +1,4 @@
 #C:\Users\acer\Desktop\pj\Final Year Project\backend\app.py
-import os
 from __future__ import annotations
 
 # from flask import Flask
@@ -9,7 +8,7 @@ from __future__ import annotations
 
 # CORS(app, supports_credentials=True)   # 👈 AFTER app is created
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, request
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -43,6 +42,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import joblib
 import numpy as np
 import pandas as pd
+from flask import Flask, jsonify, request, send_from_directory
 
 # -----------------------------------------------------------------------------
 # Paths
@@ -508,9 +508,7 @@ if __name__ == "__main__":
     print("====================================================")
     print(f"Model path: {MODEL_PATH}")
     print(f"Expected feature columns: {len(EXPECTED_FEATURE_COLUMNS)}")
-    # print("Starting server on http://127.0.0.1:5000")
+    print("Starting server on http://127.0.0.1:5000")
     print("====================================================")
 
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
-    # app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=True)
