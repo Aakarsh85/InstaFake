@@ -4,7 +4,7 @@
 //            plain-English explanation, validation, session log
 // ============================================================
 
-const API_BASE = "http://127.0.0.1:10000";
+const API_BASE = "https://instafake-backend-4tmw.onrender.com/";
 
 // ── DOM refs ──────────────────────────────────────────────
 const manualTab        = document.getElementById("manualTab");
@@ -65,7 +65,7 @@ themeToggle?.addEventListener("click", () => {
 // ── Health check ──────────────────────────────────────────
 async function checkHealth() {
   try {
-    const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(4000) });
+    const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(15000) });
     if (res.ok) {
       apiStatusText.textContent = "API Online";
       apiStatusDot.classList.add("online");
