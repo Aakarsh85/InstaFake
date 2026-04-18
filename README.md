@@ -10,6 +10,7 @@ An AI-powered full-stack web application that detects fake Instagram accounts us
 
 🔗 **Live API:** https://instafake-backend-4tmw.onrender.com/
 🔗 **Repository:** https://github.com/Aakarsh85/InstaFake
+🔗 **Dashboard:** https://insta-fake-xr4x.vercel.app/index.html
 
 ---
 
