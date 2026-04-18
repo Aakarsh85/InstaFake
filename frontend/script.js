@@ -1,3 +1,4 @@
+//C:\Users\acer\Desktop\pj\Final Year Project\frontend\script.js
 // ============================================================
 //  InstaGuard — script.js
 //  Features: history replay, demo presets, AI username fetch,
