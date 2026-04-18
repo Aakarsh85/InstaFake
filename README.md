@@ -208,16 +208,6 @@ http://localhost:8080
 
 ---
 
-## 💼 Resume Highlights
-
-* Built an **end-to-end ML-powered web application**
-* Integrated **machine learning model with real-time API**
-* Designed a **modern interactive dashboard UI**
-* Implemented **feature engineering for classification tasks**
-* Developed a **scalable REST API for predictions**
-
----
-
 ## 🔮 Future Improvements
 
 * Deep learning-based detection models
