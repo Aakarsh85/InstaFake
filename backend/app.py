@@ -85,7 +85,7 @@ def preprocess_input(df: pd.DataFrame) -> pd.DataFrame:
     replace_map = {"Yes": 1, "No": 0, "True": 1, "False": 0}
     df = df.replace(replace_map)
 
-    df = pd.get_dummies(df)
+    df = pd.get_dummies(df)                             # Converts categories into binary columns applying one-hot encoding
     df = df.apply(pd.to_numeric, errors="coerce").fillna(0)
 
     if EXPECTED_FEATURE_COLUMNS:
@@ -93,10 +93,26 @@ def preprocess_input(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
+# Raw Input
+#    ↓
+# Clean (Yes/No → 1/0)
+#    ↓
+# Encode (categories → columns)
+#    ↓
+# Numeric conversion
+#    ↓
+# Align with model features
+#    ↓
+# Final DataFrame → Model
 
 # -----------------------------------------------------------------------------
 # Prediction logic (UNCHANGED STRUCTURE)
 # -----------------------------------------------------------------------------
+
+
+# Here is what happens in this function:
+# Predict → Probability → Confidence → Format → Return
+
 def predict_rows(df: pd.DataFrame) -> List[Dict[str, Any]]:
     processed = preprocess_input(df)
 
@@ -132,6 +148,19 @@ def predict_rows(df: pd.DataFrame) -> List[Dict[str, Any]]:
 
     return results
 
+# User Input
+#    ↓
+# preprocess_input()
+#    ↓
+# model.predict()
+#    ↓
+# model.predict_proba()
+#    ↓
+# calculate confidence
+#    ↓
+# format result
+#    ↓
+# return JSON
 
 # -----------------------------------------------------------------------------
 # Routes
